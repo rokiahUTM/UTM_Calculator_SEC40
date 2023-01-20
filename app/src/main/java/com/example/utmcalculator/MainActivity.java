@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -35,7 +36,14 @@ public class MainActivity extends AppCompatActivity {
         calculateBtn = (Button) findViewById(R.id.calculateGPABtn);
         resetBtn = (Button) findViewById(R.id.resetBtn);
 
-        displayGradePoint();
+        courseCreditET.addTextChangedListener(new EditTextChangeText());
+        courseGradeET.addTextChangedListener(new EditTextChangeText());
+        courseCredit2ET.addTextChangedListener(new EditTextChangeText());
+        courseGrade2ET.addTextChangedListener(new EditTextChangeText());
+
+        calculateBtn.setOnClickListener(new buttonOnClickProcess());
+        resetBtn.setOnClickListener(new buttonOnClickProcess());
+
     }
 
     private Double getGradePoint(String grade){
@@ -89,29 +97,86 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+    private void calculateGPA(){
+
+    }
+
+    private void resetData(){
+
+    }
+
     private void displayGradePoint(){
-        courseGradeET.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        int credit = 0;
+        String grade = "E";
+        Double gradePoint =0.0;
+        boolean displayPoint = true;
+        boolean displayPoint2 = true;
 
-            }
+        if (isEmpty(courseCreditET.length())) {
+            courseCreditET.setError("This field is required");
+            displayPoint = false;
+        }
 
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        if (isEmpty(courseGradeET.length())) {
+            courseGradeET.setError("This field is required");
+            displayPoint = false;
+        }
 
-            }
+        if (isEmpty(courseCredit2ET.length())) {
+            courseCredit2ET.setError("This field is required");
+            displayPoint2 = false;
+        }
 
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (!isEmpty(courseCreditET.length())) {
-                    int credit = Integer.parseInt(courseCreditET.getText().toString());
-                    Double gradePoint = credit * getGradePoint(courseGradeET.getText().toString());
-                    gradePointTV.setText(gradePoint.toString());
-                }
-                else courseCreditET.setError("This field is required");
-            }
-        });
+        if (isEmpty(courseGrade2ET.length())) {
+            courseGrade2ET.setError("This field is required");
+            displayPoint2 = false;
+        }
 
+        if (displayPoint==true) {
+            credit = Integer.parseInt(courseCreditET.getText().toString());
+            grade = courseGradeET.getText().toString();
+            gradePoint = credit * getGradePoint(grade);
+            gradePointTV.setText(gradePoint.toString());
+        }
+        else gradePointTV.setText("0.0");
+
+        if (displayPoint2==true) {
+            credit = Integer.parseInt(courseCredit2ET.getText().toString());
+            grade = courseGrade2ET.getText().toString();
+            gradePoint = credit * getGradePoint(grade);
+            gradePoint2TV.setText(gradePoint.toString());
+        }
+        else gradePoint2TV.setText("0.0");
+
+    }
+
+    class EditTextChangeText implements TextWatcher{
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            displayGradePoint();
+        }
+    }
+
+    class buttonOnClickProcess implements View.OnClickListener{
+        @Override
+        public void onClick(View view) {
+           switch (view.getId()){
+               case (R.id.calculateGPABtn): calculateGPA();
+                                            break;
+               case (R.id.resetBtn)       : resetData();
+                                            break;
+           }
+        }
     }
 
 }
